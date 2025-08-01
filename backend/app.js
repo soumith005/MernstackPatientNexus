@@ -8,6 +8,11 @@ import { errorMiddleware } from "./middlewares/error.js";
 import messageRouter from "./router/messageRouter.js";
 import userRouter from "./router/userRouter.js";
 import appointmentRouter from "./router/appointmentRouter.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 config({ path: "./config/config.env" });
@@ -30,6 +35,8 @@ app.use(
     tempFileDir: "/tmp/",
   })
 );
+
+// API Routes
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/appointment", appointmentRouter);
@@ -41,6 +48,27 @@ app.get("/api/v1/health", (req, res) => {
     message: "Server is running",
     timestamp: new Date().toISOString()
   });
+});
+
+// Serve static files from frontend/dist
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+// Serve static files from dashboard/dist
+app.use("/dashboard", express.static(path.join(__dirname, "../dashboard/dist")));
+
+// Root route - serve frontend
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+});
+
+// Dashboard route
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "../dashboard/dist/index.html"));
+});
+
+// Catch all other routes and return the frontend app
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
 dbConnection();

@@ -1,10 +1,10 @@
 services:
-  # Backend API Service
+  # Backend API Service (now serves frontend and dashboard too)
   - type: web
     name: hospital-backend
     env: node
     plan: free
-    buildCommand: npm run build:backend
+    buildCommand: npm run build
     startCommand: cd backend && npm start
     envVars:
       - key: PORT
@@ -12,9 +12,9 @@ services:
       - key: MONGO_URI
         value: "mongodb+srv://HOSPITAL:HOSPITAL@cluster0.rh1efpz.mongodb.net/?retryWrites=true"
       - key: FRONTEND_URL
-        value: "https://hospital-frontend.onrender.com"
+        value: "https://hospital-backend.onrender.com"
       - key: DASHBOARD_URL
-        value: "https://hospital-dashboard.onrender.com"
+        value: "https://hospital-backend.onrender.com/dashboard"
       - key: JWT_SECRET_KEY
         value: "asjhdkj3hkjd1fhksahfksad"
       - key: JWT_EXPIRES
@@ -28,35 +28,5 @@ services:
       - key: CLOUDINARY_API_KEY
         value: "465373931988997"
     healthCheckPath: /api/v1/health
-    autoDeploy: true
-    pullRequestPreviewsEnabled: true
-
-  # Frontend Service
-  - type: web
-    name: hospital-frontend
-    env: static
-    plan: free
-    buildCommand: npm run build:frontend
-    staticPublishPath: ./frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://hospital-backend.onrender.com
-      - key: VITE_DASHBOARD_URL
-        value: https://hospital-dashboard.onrender.com
-    autoDeploy: true
-    pullRequestPreviewsEnabled: true
-
-  # Dashboard Service
-  - type: web
-    name: hospital-dashboard
-    env: static
-    plan: free
-    buildCommand: npm run build:dashboard
-    staticPublishPath: ./dashboard/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://hospital-backend.onrender.com
-      - key: VITE_DASHBOARD_URL
-        value: https://hospital-dashboard.onrender.com
     autoDeploy: true
     pullRequestPreviewsEnabled: true 
