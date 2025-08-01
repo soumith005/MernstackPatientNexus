@@ -11,7 +11,7 @@ This guide will help you deploy your MERN Stack Hospital Management System to Re
 ## 📋 What's Configured
 
 ### Services
-- **Backend API** (`hospital-backend`) - Node.js API server
+- **Backend API** (`lifecare-backend`) - Node.js API server
 - **Frontend** (`hospital-frontend`) - React patient interface
 - **Dashboard** (`hospital-dashboard`) - React admin dashboard
 - **Database** (`hospital-management-mongodb`) - MongoDB database
@@ -36,12 +36,12 @@ CORS_ORIGIN=https://hospital-frontend.onrender.com
 
 ### Frontend Environment Variables
 ```bash
-VITE_API_URL=https://hospital-backend.onrender.com
+VITE_API_URL=https://lifecare-backend.onrender.com
 ```
 
 ### Dashboard Environment Variables
 ```bash
-VITE_API_URL=https://hospital-backend.onrender.com
+VITE_API_URL=https://lifecare-backend.onrender.com
 ```
 
 ## 📁 Project Structure
@@ -62,9 +62,9 @@ VITE_API_URL=https://hospital-backend.onrender.com
 ## 🔗 Service URLs
 
 After deployment, your services will be available at:
-- **Backend API**: `https://hospital-backend.onrender.com`
-- **Frontend**: `https://hospital-frontend.onrender.com`
-- **Dashboard**: `https://hospital-dashboard.onrender.com`
+- **Backend API**: `https://lifecare-backend.onrender.com`
+- **Frontend**: `https://lifecare-frontend.onrender.com`
+- **Dashboard**: `https://lifecare-dashboard.onrender.com`
 
 ## 🛠️ Manual Setup (if needed)
 
@@ -114,10 +114,10 @@ The backend includes a health check endpoint at `/api/v1/health` that returns:
 ### Debug Commands:
 ```bash
 # Check build logs
-render logs --service hospital-backend
+render logs --service lifecare-backend
 
 # Check environment variables
-render env ls --service hospital-backend
+render env ls --service lifecare-backend
 ```
 
 ## 📝 Notes

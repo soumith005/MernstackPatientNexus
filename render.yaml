@@ -1,7 +1,7 @@
 services:
   # Backend API Service (now serves frontend and dashboard too)
   - type: web
-    name: hospital-backend
+    name: lifecare-backend
     env: node
     plan: free
     buildCommand: npm run build
@@ -12,9 +12,9 @@ services:
       - key: MONGO_URI
         value: "mongodb+srv://HOSPITAL:HOSPITAL@cluster0.rh1efpz.mongodb.net/?retryWrites=true"
       - key: FRONTEND_URL
-        value: "https://hospital-backend.onrender.com"
+        value: "https://lifecare-backend.onrender.com"
       - key: DASHBOARD_URL
-        value: "https://hospital-backend.onrender.com/dashboard"
+        value: "https://lifecare-backend.onrender.com/dashboard"
       - key: JWT_SECRET_KEY
         value: "asjhdkj3hkjd1fhksahfksad"
       - key: JWT_EXPIRES

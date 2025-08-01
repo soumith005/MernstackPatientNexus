@@ -151,7 +151,7 @@ npm run dev:dashboard
 - ✅ **Health Checks**: Backend monitoring enabled
 
 ### Service URLs (After Deployment)
-- **Backend**: `https://hospital-backend.onrender.com`
+- **Backend**: `https://lifecare-backend.onrender.com`
 - **Frontend**: `https://hospital-frontend.onrender.com`
 - **Dashboard**: `https://hospital-dashboard.onrender.com`
 
