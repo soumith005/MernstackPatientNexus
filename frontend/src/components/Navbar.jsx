@@ -4,6 +4,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Context } from "../main";
+import { API_ENDPOINTS } from "../utils/api";
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
@@ -11,7 +12,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await axios
-              .get("http://localhost:4000/api/v1/user/patient/logout", {
+              .get(API_ENDPOINTS.LOGOUT, {
         withCredentials: true,
       })
       .then((res) => {
@@ -49,7 +50,7 @@ const Navbar = () => {
           </div>
           <div className="admin-section">
             <a 
-              href="http://localhost:5174" 
+              href={API_ENDPOINTS.DASHBOARD_URL} 
               target="_blank" 
               rel="noopener noreferrer"
               className="adminBtn"

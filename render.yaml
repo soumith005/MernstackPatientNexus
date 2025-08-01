@@ -1,32 +1,32 @@
-databases:
-  - name: hospital-management-mongodb
-    databaseName: hospital-management
-    user: hospital-user
-    plan: free
-
 services:
   # Backend API Service
   - type: web
     name: hospital-backend
     env: node
     plan: free
-    buildCommand: cd backend && npm install
+    buildCommand: npm run build:backend
     startCommand: cd backend && npm start
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: MONGODB_URI
-        fromDatabase:
-          name: hospital-management-mongodb
-          property: connectionString
-      - key: JWT_SECRET
-        generateValue: true
-      - key: JWT_EXPIRE
+      - key: PORT
+        value: "4000"
+      - key: MONGO_URI
+        value: "mongodb+srv://HOSPITAL:HOSPITAL@cluster0.rh1efpz.mongodb.net/?retryWrites=true"
+      - key: FRONTEND_URL
+        value: "https://hospital-frontend.onrender.com"
+      - key: DASHBOARD_URL
+        value: "https://hospital-dashboard.onrender.com"
+      - key: JWT_SECRET_KEY
+        value: "asjhdkj3hkjd1fhksahfksad"
+      - key: JWT_EXPIRES
         value: "7d"
       - key: COOKIE_EXPIRE
         value: "7"
-      - key: CORS_ORIGIN
-        value: https://hospital-frontend.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        value: "ddmlxju8j"
+      - key: CLOUDINARY_API_SECRET
+        value: "pPURipHJig0iBNcUbiJgBnZzvpg"
+      - key: CLOUDINARY_API_KEY
+        value: "465373931988997"
     healthCheckPath: /api/v1/health
     autoDeploy: true
     pullRequestPreviewsEnabled: true
@@ -36,11 +36,13 @@ services:
     name: hospital-frontend
     env: static
     plan: free
-    buildCommand: cd frontend && npm install && npm run build
+    buildCommand: npm run build:frontend
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL
         value: https://hospital-backend.onrender.com
+      - key: VITE_DASHBOARD_URL
+        value: https://hospital-dashboard.onrender.com
     autoDeploy: true
     pullRequestPreviewsEnabled: true
 
@@ -49,10 +51,12 @@ services:
     name: hospital-dashboard
     env: static
     plan: free
-    buildCommand: cd dashboard && npm install && npm run build
+    buildCommand: npm run build:dashboard
     staticPublishPath: ./dashboard/dist
     envVars:
       - key: VITE_API_URL
         value: https://hospital-backend.onrender.com
+      - key: VITE_DASHBOARD_URL
+        value: https://hospital-dashboard.onrender.com
     autoDeploy: true
     pullRequestPreviewsEnabled: true 

@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Navigate, useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from "../utils/api";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -12,7 +13,7 @@ const Doctors = () => {
     const fetchDoctors = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:4000/api/v1/user/doctors",
+          API_ENDPOINTS.GET_DOCTORS,
           { withCredentials: true }
         );
         setDoctors(data.doctors);

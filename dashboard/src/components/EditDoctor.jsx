@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import axios from "axios";
+import { API_ENDPOINTS } from "../utils/api";
 
 const EditDoctor = () => {
   const { isAuthenticated } = useContext(Context);
@@ -54,7 +55,7 @@ const EditDoctor = () => {
     const fetchDoctor = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:4000/api/v1/user/doctor/${id}`,
+          API_ENDPOINTS.GET_DOCTOR_BY_ID(id),
           { withCredentials: true }
         );
         setDoctor(data.doctor);
@@ -121,10 +122,10 @@ const EditDoctor = () => {
         console.log("No photo selected or uploaded");
       }
 
-      console.log("Sending request to:", `http://localhost:4000/api/v1/user/doctor/${id}`);
+      console.log("Sending request to:", API_ENDPOINTS.UPDATE_DOCTOR(id));
       
       const response = await axios.put(
-        `http://localhost:4000/api/v1/user/doctor/${id}`,
+        API_ENDPOINTS.UPDATE_DOCTOR(id),
         formData,
         {
           withCredentials: true,

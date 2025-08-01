@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { API_ENDPOINTS } from "../utils/api";
 
 const AppointmentForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -35,10 +36,10 @@ const AppointmentForm = () => {
     const fetchDoctors = async () => {
       try {
         setLoading(true);
-        console.log("Fetching doctors from:", "http://localhost:4000/api/v1/user/doctors");
+        console.log("Fetching doctors from:", API_ENDPOINTS.GET_DOCTORS);
         
         // Test if backend is responding
-        const response = await axios.get("http://localhost:4000/api/v1/user/doctors");
+        const response = await axios.get(API_ENDPOINTS.GET_DOCTORS);
         console.log("Response status:", response.status);
         console.log("Raw response:", response.data);
         
@@ -77,7 +78,7 @@ const AppointmentForm = () => {
       }
       
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/appointment/post",
+        API_ENDPOINTS.POST_APPOINTMENT,
         {
           firstName,
           lastName,

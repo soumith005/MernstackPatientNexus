@@ -18,10 +18,11 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "./components/Sidebar";
 import AddNewAdmin from "./components/AddNewAdmin";
 import "./App.css";
+import API_BASE_URL from "./utils/api";
 
 // Configure axios defaults
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:4000";
+axios.defaults.baseURL = API_BASE_URL;
 
 const App = () => {
   const { isAuthenticated, setIsAuthenticated, admin, setAdmin } =

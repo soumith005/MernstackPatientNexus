@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import axios from "axios";
+import { API_ENDPOINTS } from "../utils/api";
 
 const AddNewDoctor = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
@@ -91,7 +92,7 @@ const AddNewDoctor = () => {
         formData.append("docAvatar", docAvatar);
       }
       await axios
-                  .post("http://localhost:4000/api/v1/user/doctor/addnew", formData, {
+                  .post(API_ENDPOINTS.ADD_DOCTOR, formData, {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         })
