@@ -20,7 +20,7 @@ const App = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/v1/user/patient/me",
+          "http://localhost:4000/api/v1/user/patient/me",
           {
             withCredentials: true,
           }
@@ -32,8 +32,11 @@ const App = () => {
         setUser({});
       }
     };
-    fetchUser();
-  }, [isAuthenticated]);
+    // Only fetch user if not already authenticated
+    if (!isAuthenticated) {
+      fetchUser();
+    }
+  }, [setIsAuthenticated, setUser, isAuthenticated]);
 
   return (
     <>

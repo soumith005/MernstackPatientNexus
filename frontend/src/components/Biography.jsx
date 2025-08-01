@@ -11,26 +11,22 @@ const Biography = ({imageUrl}) => {
           <p>Biography</p>
           <h3>Who We Are</h3>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
-            blanditiis sequi aperiam. Debitis fugiat harum ex maxime illo
-            consequatur mollitia voluptatem omnis nihil nesciunt beatae esse
-            ipsam, sapiente totam aspernatur porro ducimus aperiam nisi. Ex
-            magnam voluptatum consectetur reprehenderit fugiat recusandae aut
-            similique illum natus velit, praesentium nostrum nesciunt. Deleniti,
-            nesciunt laboriosam totam iusto!
+           We are an enthusiastic group of tech professionals committed
+            to improving hospital systems through innovative software solutions. 
+            Our vision is to bridge the gap between medical services and digital 
+            efficiency by crafting reliable, intelligent tools for healthcare environments.
           </p>
-          <p>We are all in 2024!</p>
+          <p>We are all in 2025!</p>
           <p>We are working on a MERN STACK PROJECT.</p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores
-            assumenda exercitationem accusamus sit repellendus quo optio dolorum
-            corporis corrupti. Quas similique vel minima veniam tenetur
-            obcaecati atque magni suscipit laboriosam! Veniam vitae minus nihil
-            cupiditate natus provident. Ex illum quasi pariatur odit nisi
-            voluptas illo qui ipsum mollitia. Libero, assumenda?
+            This system is designed to reduce administrative burden, 
+            automate patient and staff management, and enhance the 
+            overall service quality within hospitals. From appointment scheduling 
+            to inventory tracking, our platform provides intuitive features that cater 
+            to modern medical demands.
           </p>
-          <p>Lorem ipsum dolor sit amet!</p>
-          <p>Coding is fun!</p>
+          <p>We believe in smart solutions that prioritize both healthcare providers and patients.</p>
+          <p>Developing this system is not just about code — it's about meaningful impact.</p>
         </div>
       </div>
     </>

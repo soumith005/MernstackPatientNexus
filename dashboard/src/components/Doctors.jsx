@@ -2,16 +2,17 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../main";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
   const { isAuthenticated } = useContext(Context);
+  const navigateTo = useNavigate();
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:5000/api/v1/user/doctors",
+          "http://localhost:4000/api/v1/user/doctors",
           { withCredentials: true }
         );
         setDoctors(data.doctors);
@@ -34,8 +35,13 @@ const Doctors = () => {
             return (
               <div className="card">
                 <img
-                  src={element.docAvatar && element.docAvatar.url}
+                  src={
+                    element.docAvatar && element.docAvatar.url 
+                      ? element.docAvatar.url 
+                      : "/docHolder.jpg"
+                  }
                   alt="doctor avatar"
+                  style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "50%" }}
                 />
                 <h4>{`${element.firstName} ${element.lastName}`}</h4>
                 <div className="details">
@@ -58,6 +64,20 @@ const Doctors = () => {
                     Gender: <span>{element.gender}</span>
                   </p>
                 </div>
+                <button 
+                  onClick={() => navigateTo(`/doctor/edit/${element._id}`)}
+                  style={{
+                    marginTop: "10px",
+                    padding: "8px 16px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Edit Profile
+                </button>
               </div>
             );
           })

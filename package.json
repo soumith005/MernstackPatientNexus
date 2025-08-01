@@ -1,0 +1,21 @@
+{
+  "name": "mernstackfinalproject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "",
+    "start": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application/issues"
+  },
+  "homepage": "https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application#readme",
+  "description": ""
+}

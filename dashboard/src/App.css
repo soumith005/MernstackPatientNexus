@@ -36,6 +36,12 @@ body {
     padding: 40px 20px;
   }
 }
+.logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
 @media (max-width: 460px) {
   .logo {
     width: 100%;

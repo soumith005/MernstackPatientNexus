@@ -1,12 +1,15 @@
-import React, { useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Context } from "../main";
 import axios from "axios";
 
-const AddNewDoctor = () => {
-  const { isAuthenticated, setIsAuthenticated } = useContext(Context);
+const EditDoctor = () => {
+  const { isAuthenticated } = useContext(Context);
+  const { id } = useParams();
+  const navigateTo = useNavigate();
 
+  const [doctor, setDoctor] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,14 +17,11 @@ const AddNewDoctor = () => {
   const [nic, setNic] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
-  const [password, setPassword] = useState("");
   const [doctorDepartment, setDoctorDepartment] = useState("");
   const [docAvatar, setDocAvatar] = useState("");
   const [docAvatarPreview, setDocAvatarPreview] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [useExistingPhoto, setUseExistingPhoto] = useState(false);
-
-  const navigateTo = useNavigate();
 
   const departmentsArray = [
     "Pediatrics",
@@ -50,6 +50,33 @@ const AddNewDoctor = () => {
     "/docHolder.jpg"
   ];
 
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:4000/api/v1/user/doctor/${id}`,
+          { withCredentials: true }
+        );
+        setDoctor(data.doctor);
+        setFirstName(data.doctor.firstName);
+        setLastName(data.doctor.lastName);
+        setEmail(data.doctor.email);
+        setPhone(data.doctor.phone);
+        setNic(data.doctor.nic);
+        setDob(data.doctor.dob.substring(0, 10));
+        setGender(data.doctor.gender);
+        setDoctorDepartment(data.doctor.doctorDepartment);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Error fetching doctor details");
+        navigateTo("/doctors");
+      }
+    };
+
+    if (id) {
+      fetchDoctor();
+    }
+  }, [id, navigateTo]);
+
   const handleAvatar = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -69,59 +96,66 @@ const AddNewDoctor = () => {
     setUseExistingPhoto(true);
   };
 
-  const handleAddNewDoctor = async (e) => {
+  const handleUpdateDoctor = async (e) => {
     e.preventDefault();
     try {
+      console.log("Starting doctor update...");
       const formData = new FormData();
       formData.append("firstName", firstName);
       formData.append("lastName", lastName);
       formData.append("email", email);
       formData.append("phone", phone);
-      formData.append("password", password);
       formData.append("nic", nic);
       formData.append("dob", dob);
       formData.append("gender", gender);
       formData.append("doctorDepartment", doctorDepartment);
       
       if (useExistingPhoto && selectedPhoto) {
-        // If using existing photo, we'll handle this differently in the backend
+        console.log("Using existing photo:", selectedPhoto);
         formData.append("useExistingPhoto", "true");
         formData.append("selectedPhoto", selectedPhoto);
-      } else {
+      } else if (docAvatar) {
+        console.log("Uploading new photo:", docAvatar.name);
         formData.append("docAvatar", docAvatar);
+      } else {
+        console.log("No photo selected or uploaded");
       }
-      await axios
-                  .post("http://localhost:4000/api/v1/user/doctor/addnew", formData, {
+
+      console.log("Sending request to:", `http://localhost:4000/api/v1/user/doctor/${id}`);
+      
+      const response = await axios.put(
+        `http://localhost:4000/api/v1/user/doctor/${id}`,
+        formData,
+        {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
-        })
-        .then((res) => {
-          toast.success(res.data.message);
-          setIsAuthenticated(true);
-          navigateTo("/");
-          setFirstName("");
-          setLastName("");
-          setEmail("");
-          setPhone("");
-          setNic("");
-          setDob("");
-          setGender("");
-          setPassword("");
-        });
+        }
+      );
+      
+      console.log("Update successful:", response.data);
+      toast.success("Doctor updated successfully!");
+      navigateTo("/doctors");
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.error("Update error:", error);
+      console.error("Error response:", error.response?.data);
+      toast.error(error.response?.data?.message || "Error updating doctor");
     }
   };
 
   if (!isAuthenticated) {
     return <Navigate to={"/login"} />;
   }
+
+  if (!doctor) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <section className="page">
       <section className="container add-doctor-form">
         <img src="/logo.png" alt="logo" className="logo"/>
-        <h1 className="form-title">REGISTER A NEW DOCTOR</h1>
-        <form onSubmit={handleAddNewDoctor}>
+        <h1 className="form-title">EDIT DOCTOR PROFILE</h1>
+        <form onSubmit={handleUpdateDoctor}>
           <div className="first-wrapper">
             <div>
               <img
@@ -130,7 +164,7 @@ const AddNewDoctor = () => {
                     ? `${docAvatarPreview}` 
                     : selectedPhoto 
                     ? selectedPhoto 
-                    : "/docHolder.jpg"
+                    : doctor.docAvatar?.url || "/docHolder.jpg"
                 }
                 alt="Doctor Avatar"
                 style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "50%" }}
@@ -208,12 +242,6 @@ const AddNewDoctor = () => {
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
               <select
                 value={doctorDepartment}
                 onChange={(e) => {
@@ -229,7 +257,7 @@ const AddNewDoctor = () => {
                   );
                 })}
               </select>
-              <button type="submit">Register New Doctor</button>
+              <button type="submit">Update Doctor Profile</button>
             </div>
           </div>
         </form>
@@ -238,4 +266,4 @@ const AddNewDoctor = () => {
   );
 };
 
-export default AddNewDoctor;
+export default EditDoctor; 

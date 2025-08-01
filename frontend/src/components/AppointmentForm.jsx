@@ -13,8 +13,7 @@ const AppointmentForm = () => {
   const [gender, setGender] = useState("");
   const [appointmentDate, setAppointmentDate] = useState("");
   const [department, setDepartment] = useState("Pediatrics");
-  const [doctorFirstName, setDoctorFirstName] = useState("");
-  const [doctorLastName, setDoctorLastName] = useState("");
+  const [selectedDoctorId, setSelectedDoctorId] = useState("");
   const [address, setAddress] = useState("");
   const [hasVisited, setHasVisited] = useState(false);
 
@@ -31,14 +30,36 @@ const AppointmentForm = () => {
   ];
 
   const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchDoctors = async () => {
-      const { data } = await axios.get(
-        "http://localhost:5000/api/v1/user/doctors",
-        { withCredentials: true }
-      );
-      setDoctors(data.doctors);
-      console.log(data.doctors);
+      try {
+        setLoading(true);
+        console.log("Fetching doctors from:", "http://localhost:4000/api/v1/user/doctors");
+        
+        // Test if backend is responding
+        const response = await axios.get("http://localhost:4000/api/v1/user/doctors");
+        console.log("Response status:", response.status);
+        console.log("Raw response:", response.data);
+        
+        setDoctors(response.data.doctors);
+        console.log("Doctors loaded:", response.data.doctors);
+        console.log("Number of doctors:", response.data.doctors?.length || 0);
+        
+        // Log each doctor's department
+        response.data.doctors?.forEach((doctor, index) => {
+          console.log(`Doctor ${index + 1}:`, doctor.firstName, doctor.lastName, "- Department:", doctor.doctorDepartment);
+        });
+        
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+        console.error("Error message:", error.message);
+        console.error("Error response:", error.response);
+        console.error("Error status:", error.response?.status);
+        toast.error(`Failed to load doctors: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchDoctors();
   }, []);
@@ -46,8 +67,17 @@ const AppointmentForm = () => {
     e.preventDefault();
     try {
       const hasVisitedBool = Boolean(hasVisited);
+      
+      // Find the selected doctor
+      const selectedDoctor = doctors.find(doctor => doctor._id === selectedDoctorId);
+      
+      if (!selectedDoctor) {
+        toast.error("Please select a doctor");
+        return;
+      }
+      
       const { data } = await axios.post(
-        "http://localhost:5000/api/v1/appointment/post",
+        "http://localhost:4000/api/v1/appointment/post",
         {
           firstName,
           lastName,
@@ -58,8 +88,8 @@ const AppointmentForm = () => {
           gender,
           appointment_date: appointmentDate,
           department,
-          doctor_firstName: doctorFirstName,
-          doctor_lastName: doctorLastName,
+          doctor_firstName: selectedDoctor.firstName,
+          doctor_lastName: selectedDoctor.lastName,
           hasVisited: hasVisitedBool,
           address,
         },
@@ -78,12 +108,15 @@ const AppointmentForm = () => {
         setGender(""),
         setAppointmentDate(""),
         setDepartment(""),
-        setDoctorFirstName(""),
-        setDoctorLastName(""),
-        setHasVisited(""),
+        setSelectedDoctorId(""),
+        setHasVisited(false),
         setAddress("");
     } catch (error) {
-      toast.error(error.response.data.message);
+      if (error.response?.status === 401) {
+        toast.error("Please login first to submit an appointment");
+      } else {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
     }
   };
 
@@ -152,8 +185,7 @@ const AppointmentForm = () => {
               value={department}
               onChange={(e) => {
                 setDepartment(e.target.value);
-                setDoctorFirstName("");
-                setDoctorLastName("");
+                setSelectedDoctorId("");
               }}
             >
               {departmentsArray.map((depart, index) => {
@@ -186,31 +218,27 @@ const AppointmentForm = () => {
                 ))}
             </select> */}
             <select
-              value={JSON.stringify({
-                firstName: doctorFirstName,
-                lastName: doctorLastName,
-              })}
-              onChange={(e) => {
-                const { firstName, lastName } = JSON.parse(e.target.value);
-                setDoctorFirstName(firstName);
-                setDoctorLastName(lastName);
-              }}
-              disabled={!department}
+              value={selectedDoctorId}
+              onChange={(e) => setSelectedDoctorId(e.target.value)}
+              disabled={!department || loading}
             >
-              <option value="">Select Doctor</option>
-              {doctors
-                .filter((doctor) => doctor.doctorDepartment === department)
-                .map((doctor, index) => (
+              <option value="">
+                {loading ? "Loading doctors..." : "Select Doctor"}
+              </option>
+              {(() => {
+                const filteredDoctors = doctors.filter((doctor) => doctor.doctorDepartment === department);
+                console.log("Current department:", department);
+                console.log("All doctors:", doctors);
+                console.log("Filtered doctors for", department, ":", filteredDoctors);
+                return filteredDoctors.map((doctor, index) => (
                   <option
-                    key={index}
-                    value={JSON.stringify({
-                      firstName: doctor.firstName,
-                      lastName: doctor.lastName,
-                    })}
+                    key={doctor._id}
+                    value={doctor._id}
                   >
                     {doctor.firstName} {doctor.lastName}
                   </option>
-                ))}
+                ));
+              })()}
             </select>
           </div>
           <textarea

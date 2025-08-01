@@ -11,7 +11,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await axios
-      .get("http://localhost:5000/api/v1/user/patient/logout", {
+              .get("http://localhost:4000/api/v1/user/patient/logout", {
         withCredentials: true,
       })
       .then((res) => {
@@ -47,15 +47,25 @@ const Navbar = () => {
               About Us
             </Link>
           </div>
-          {isAuthenticated ? (
-            <button className="logoutBtn btn" onClick={handleLogout}>
-              LOGOUT
-            </button>
-          ) : (
-            <button className="loginBtn btn" onClick={goToLogin}>
-              LOGIN
-            </button>
-          )}
+          <div className="admin-section">
+            <a 
+              href="http://localhost:5174" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="adminBtn"
+            >
+              ADMIN DASHBOARD
+            </a>
+            {isAuthenticated ? (
+              <button className="logoutBtn btn" onClick={handleLogout}>
+                LOGOUT
+              </button>
+            ) : (
+              <button className="loginBtn btn" onClick={goToLogin}>
+                LOGIN
+              </button>
+            )}
+          </div>
         </div>
         <div className="hamburger" onClick={() => setShow(!show)}>
           <GiHamburgerMenu />

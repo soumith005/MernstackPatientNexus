@@ -12,10 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:5000/api/v1/appointment/getall",
-          { withCredentials: true }
-        );
+        const { data } = await axios.get("/api/v1/appointment/getall");
         setAppointments(data.appointments);
       } catch (error) {
         setAppointments([]);
@@ -26,11 +23,10 @@ const Dashboard = () => {
 
   const handleUpdateStatus = async (appointmentId, status) => {
     try {
-      const { data } = await axios.put(
-        `http://localhost:5000/api/v1/appointment/update/${appointmentId}`,
-        { status },
-        { withCredentials: true }
-      );
+              const { data } = await axios.put(
+          `/api/v1/appointment/update/${appointmentId}`,
+          { status }
+        );
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
           appointment._id === appointmentId
@@ -59,14 +55,13 @@ const Dashboard = () => {
               <div>
                 <p>Hello ,</p>
                 <h5>
-                  {admin &&
-                    `${admin.firstName} ${admin.lastName}`}{" "}
+                  {admin && admin.firstName && admin.lastName
+                    ? `${admin.firstName} ${admin.lastName}`
+                    : "Admin"}
                 </h5>
               </div>
               <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Facilis, nam molestias. Eaque molestiae ipsam commodi neque.
-                Assumenda repellendus necessitatibus itaque.
+                I am ready to assist you with accurate and helpful information, ensuring a smooth and productive experience.
               </p>
             </div>
           </div>

@@ -104,14 +104,43 @@ export const addNewAdmin = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("Doctor Avatar Required!", 400));
+  const { useExistingPhoto, selectedPhoto } = req.body;
+  
+  let docAvatar = null;
+  let cloudinaryResponse = null;
+  
+  if (useExistingPhoto === "true" && selectedPhoto) {
+    // Use existing photo from public folder
+    const photoPath = selectedPhoto.replace("/", "");
+    cloudinaryResponse = {
+      public_id: `hospital_doctors/${Date.now()}`,
+      secure_url: `http://localhost:5174${selectedPhoto}`
+    };
+  } else {
+    // Upload new photo
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return next(new ErrorHandler("Doctor Avatar Required!", 400));
+    }
+    docAvatar = req.files.docAvatar;
+    const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowedFormats.includes(docAvatar.mimetype)) {
+      return next(new ErrorHandler("File Format Not Supported!", 400));
+    }
+    
+    cloudinaryResponse = await cloudinary.uploader.upload(
+      docAvatar.tempFilePath
+    );
+    if (!cloudinaryResponse || cloudinaryResponse.error) {
+      console.error(
+        "Cloudinary Error:",
+        cloudinaryResponse.error || "Unknown Cloudinary error"
+      );
+      return next(
+        new ErrorHandler("Failed To Upload Doctor Avatar To Cloudinary", 500)
+      );
+    } 
   }
-  const { docAvatar } = req.files;
-  const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
-  if (!allowedFormats.includes(docAvatar.mimetype)) {
-    return next(new ErrorHandler("File Format Not Supported!", 400));
-  }
+
   const {
     firstName,
     lastName,
@@ -123,6 +152,7 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
     password,
     doctorDepartment,
   } = req.body;
+
   if (
     !firstName ||
     !lastName ||
@@ -132,29 +162,18 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
     !dob ||
     !gender ||
     !password ||
-    !doctorDepartment ||
-    !docAvatar
+    !doctorDepartment
   ) {
     return next(new ErrorHandler("Please Fill Full Form!", 400));
   }
+
   const isRegistered = await User.findOne({ email });
   if (isRegistered) {
     return next(
       new ErrorHandler("Doctor With This Email Already Exists!", 400)
     );
   }
-  const cloudinaryResponse = await cloudinary.uploader.upload(
-    docAvatar.tempFilePath
-  );
-  if (!cloudinaryResponse || cloudinaryResponse.error) {
-    console.error(
-      "Cloudinary Error:",
-      cloudinaryResponse.error || "Unknown Cloudinary error"
-    );
-    return next(
-      new ErrorHandler("Failed To Upload Doctor Avatar To Cloudinary", 500)
-    );
-  }
+
   const doctor = await User.create({
     firstName,
     lastName,
@@ -171,6 +190,7 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
       url: cloudinaryResponse.secure_url,
     },
   });
+
   res.status(200).json({
     success: true,
     message: "New Doctor Registered",
@@ -185,6 +205,141 @@ export const getAllDoctors = catchAsyncErrors(async (req, res, next) => {
     doctors,
   });
 });
+
+export const getDoctorById = catchAsyncErrors(async (req, res, next) => {
+  const doctor = await User.findById(req.params.id);
+  if (!doctor || doctor.role !== "Doctor") {
+    return next(new ErrorHandler("Doctor not found!", 404));
+  }
+  res.status(200).json({
+    success: true,
+    doctor,
+  });
+});
+
+export const updateDoctor = catchAsyncErrors(async (req, res, next) => {
+  const { useExistingPhoto, selectedPhoto } = req.body;
+  
+  let docAvatar = null;
+  let cloudinaryResponse = null;
+  
+  if (useExistingPhoto === "true" && selectedPhoto) {
+    // Use existing photo from public folder
+    cloudinaryResponse = {
+      public_id: `hospital_doctors/${Date.now()}`,
+      secure_url: `http://localhost:5174${selectedPhoto}`
+    };
+  } else if (req.files && req.files.docAvatar) {
+    // Upload new photo
+    docAvatar = req.files.docAvatar;
+    const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
+    if (!allowedFormats.includes(docAvatar.mimetype)) {
+      return next(new ErrorHandler("File Format Not Supported!", 400));
+    }
+    
+    cloudinaryResponse = await cloudinary.uploader.upload(
+      docAvatar.tempFilePath
+    );
+    if (!cloudinaryResponse || cloudinaryResponse.error) {
+      console.error(
+        "Cloudinary Error:",
+        cloudinaryResponse.error || "Unknown Cloudinary error"
+      );
+      return next(
+        new ErrorHandler("Failed To Upload Doctor Avatar To Cloudinary", 500)
+      );
+    }
+  }
+
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    nic,
+    dob,
+    gender,
+    doctorDepartment,
+  } = req.body;
+
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !phone ||
+    !nic ||
+    !dob ||
+    !gender ||
+    !doctorDepartment
+  ) {
+    return next(new ErrorHandler("Please Fill Full Form!", 400));
+  }
+
+  const doctor = await User.findById(req.params.id);
+  if (!doctor || doctor.role !== "Doctor") {
+    return next(new ErrorHandler("Doctor not found!", 404));
+  }
+
+  // Check if email is already taken by another user
+  const existingUser = await User.findOne({ email, _id: { $ne: req.params.id } });
+  if (existingUser) {
+    return next(new ErrorHandler("Email already exists!", 400));
+  }
+
+  const updateData = {
+    firstName,
+    lastName,
+    email,
+    phone,
+    nic,
+    dob,
+    gender,
+    doctorDepartment,
+  };
+
+  if (cloudinaryResponse) {
+    updateData.docAvatar = {
+      public_id: cloudinaryResponse.public_id,
+      url: cloudinaryResponse.secure_url,
+    };
+  }
+
+  const updatedDoctor = await User.findByIdAndUpdate(
+    req.params.id,
+    updateData,
+    { new: true }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Doctor updated successfully",
+    doctor: updatedDoctor,
+  });
+});
+
+export const getDoctor = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.params;
+  console.log("Getting doctor with ID:", id);
+  const doctor = await User.findById(id);
+  
+  if (!doctor) {
+    console.log("Doctor not found with ID:", id);
+    return next(new ErrorHandler("Doctor not found!", 404));
+  }
+  
+  if (doctor.role !== "Doctor") {
+    console.log("User is not a doctor:", doctor.role);
+    return next(new ErrorHandler("User is not a doctor!", 400));
+  }
+  
+  console.log("Doctor found:", doctor.firstName, doctor.lastName);
+  res.status(200).json({
+    success: true,
+    doctor,
+  });
+});
+
+
 
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
   const user = req.user;
