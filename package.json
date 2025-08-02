@@ -1,5 +1,5 @@
 {
-  "name": "lifecare-hospital-management",
+  "name": "patient-nexus-hospital-management",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -28,5 +28,5 @@
     "url": "https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application/issues"
   },
   "homepage": "https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application#readme",
-  "description": "Lifecare Hospital Management System - A comprehensive MERN stack application for managing hospital operations, appointments, and patient care."
+  "description": "Patient Nexus Hospital Management System - A comprehensive MERN stack application for managing hospital operations, appointments, and patient care."
 }

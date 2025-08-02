@@ -75,12 +75,12 @@ CORS_ORIGIN: https://hospital-frontend.onrender.com
 
 #### Frontend Service
 ```yaml
-VITE_API_URL: https://lifecare-backend.onrender.com
+VITE_API_URL: https://patient-nexus-backend.onrender.com
 ```
 
 #### Dashboard Service
 ```yaml
-VITE_API_URL: https://lifecare-backend.onrender.com
+VITE_API_URL: https://patient-nexus-backend.onrender.com
 ```
 
 ## 📁 Project Structure

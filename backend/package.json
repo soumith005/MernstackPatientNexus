@@ -1,5 +1,5 @@
 {
-  "name": "lifecare-backend",
+  "name": "patient-nexus-backend",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -22,7 +22,7 @@
     "mongoose": "^8.17.0",
     "validator": "^13.15.15"
   },
-  "description": "Lifecare Hospital Management System Backend API",
+  "description": "Patient Nexus Hospital Management System Backend API",
   "devDependencies": {
     "nodemon": "^3.1.10"
   }
