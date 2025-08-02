@@ -16,7 +16,46 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-config({ path: "./config/config.env" });
+
+// Load .env file from root directory
+const rootEnvPath = path.join(__dirname, "../.env");
+console.log("Looking for .env file at:", rootEnvPath);
+console.log("File exists:", fs.existsSync(rootEnvPath));
+
+if (fs.existsSync(rootEnvPath)) {
+  config({ path: rootEnvPath });
+  console.log("✅ .env file loaded successfully");
+} else {
+  console.log("❌ .env file not found at:", rootEnvPath);
+  console.log("Creating .env file with default values...");
+  
+  const defaultEnvContent = `PORT=4000
+
+MONGO_URI=mongodb+srv://HOSPITAL:HOSPITAL@cluster0.rh1efpz.mongodb.net/?retryWrites=true
+FRONTEND_URL=http://localhost:5173
+DASHBOARD_URL=http://localhost:5174
+
+JWT_SECRET_KEY=asjhdkj3hkjd1fhksahfksad
+JWT_EXPIRES=7d
+COOKIE_EXPIRE=7
+
+CLOUDINARY_CLOUD_NAME=ddmlxju8j
+CLOUDINARY_API_SECRET=pPURipHJig0iBNcUbiJgBnZzvpg
+CLOUDINARY_API_KEY=465373931988997`;
+  
+  try {
+    fs.writeFileSync(rootEnvPath, defaultEnvContent);
+    console.log("✅ Created .env file with default values");
+    config({ path: rootEnvPath });
+  } catch (error) {
+    console.error("❌ Could not create .env file:", error);
+  }
+}
+
+// Debug: Check if environment variables are loaded
+console.log("Environment check:");
+console.log("MONGO_URI:", process.env.MONGO_URI ? "✅ Loaded" : "❌ NOT LOADED");
+console.log("PORT:", process.env.PORT || "❌ NOT LOADED");
 
 app.use(
   cors({
