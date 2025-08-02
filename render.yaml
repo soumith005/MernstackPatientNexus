@@ -5,7 +5,7 @@ services:
     env: node
     plan: free
     buildCommand: npm run build
-    startCommand: cd backend && npm start
+    startCommand: npm start
     envVars:
       - key: PORT
         value: "4000"
@@ -27,6 +27,8 @@ services:
         value: "pPURipHJig0iBNcUbiJgBnZzvpg"
       - key: CLOUDINARY_API_KEY
         value: "465373931988997"
+      - key: VITE_API_URL
+        value: "https://patient-nexus-backend.onrender.com"
     healthCheckPath: /api/v1/health
     autoDeploy: true
     pullRequestPreviewsEnabled: true 

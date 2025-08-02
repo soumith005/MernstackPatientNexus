@@ -3,21 +3,24 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build:backend && npm run build:frontend && npm run build:dashboard",
+    "install:all": "npm install && cd frontend && npm install && cd ../dashboard && npm install",
     "build:backend": "cd backend && npm install",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "build:dashboard": "cd dashboard && npm install && npm run build || echo 'Dashboard build failed, continuing...'",
-    "start": "cd backend && npm start",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:dashboard\"",
+    "build:dashboard": "cd dashboard && npm install && npm run build",
+    "build": "npm run build:backend && npm run build:frontend && npm run build:dashboard",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:dashboard": "cd dashboard && npm run dev",
-    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../dashboard && npm install",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:dashboard\"",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm run preview",
+    "start:dashboard": "cd dashboard && npm run preview",
+    "start": "cd backend && npm start",
     "prebuild": "npm run install:all"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application.git"
+    "url": "git+https://github.com/soumith005/MernstackPatientNexus.git"
   },
   "keywords": [],
   "author": "",
@@ -26,8 +29,8 @@
     "concurrently": "^8.2.2"
   },
   "bugs": {
-    "url": "https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application/issues"
+    "url": "https://github.com/soumith005/MernstackPatientNexus/issues"
   },
-  "homepage": "https://github.com/Zeeshu911/MERN-Stack-Hospital-Management-System-Web-Application#readme",
+  "homepage": "https://github.com/soumith005/MernstackPatientNexus#readme",
   "description": "Patient Nexus Hospital Management System - A comprehensive MERN stack application for managing hospital operations, appointments, and patient care."
 }
