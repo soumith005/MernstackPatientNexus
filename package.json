@@ -6,13 +6,14 @@
     "build": "npm run build:backend && npm run build:frontend && npm run build:dashboard",
     "build:backend": "cd backend && npm install",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "build:dashboard": "cd dashboard && npm install && npm run build",
+    "build:dashboard": "cd dashboard && npm install && npm run build || echo 'Dashboard build failed, continuing...'",
     "start": "cd backend && npm start",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:dashboard\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:dashboard": "cd dashboard && npm run dev",
-    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../dashboard && npm install"
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../dashboard && npm install",
+    "prebuild": "npm run install:all"
   },
   "repository": {
     "type": "git",

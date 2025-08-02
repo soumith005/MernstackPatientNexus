@@ -10,6 +10,7 @@ import userRouter from "./router/userRouter.js";
 import appointmentRouter from "./router/appointmentRouter.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,22 +54,45 @@ app.get("/api/v1/health", (req, res) => {
 // Serve static files from frontend/dist
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// Serve static files from dashboard/dist
-app.use("/dashboard", express.static(path.join(__dirname, "../dashboard/dist")));
+// Serve static files from dashboard/dist (if it exists)
+const dashboardDistPath = path.join(__dirname, "../dashboard/dist");
+if (fs.existsSync(dashboardDistPath)) {
+  app.use("/dashboard", express.static(dashboardDistPath));
+} else {
+  console.log("Dashboard dist folder not found, skipping dashboard static files");
+}
 
 // Root route - serve frontend
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  const frontendPath = path.join(__dirname, "../frontend/dist/index.html");
+  if (fs.existsSync(frontendPath)) {
+    res.sendFile(frontendPath);
+  } else {
+    res.status(404).json({ error: "Frontend not built" });
+  }
 });
 
 // Dashboard route
 app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "../dashboard/dist/index.html"));
+  const dashboardPath = path.join(__dirname, "../dashboard/dist/index.html");
+  if (fs.existsSync(dashboardPath)) {
+    res.sendFile(dashboardPath);
+  } else {
+    res.status(404).json({ 
+      error: "Dashboard not built", 
+      message: "Dashboard dist folder not found. Please ensure the dashboard build process completed successfully." 
+    });
+  }
 });
 
 // Catch all other routes and return the frontend app
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  const frontendPath = path.join(__dirname, "../frontend/dist/index.html");
+  if (fs.existsSync(frontendPath)) {
+    res.sendFile(frontendPath);
+  } else {
+    res.status(404).json({ error: "Frontend not built" });
+  }
 });
 
 dbConnection();

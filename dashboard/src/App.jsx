@@ -29,19 +29,22 @@ const App = () => {
     useContext(Context);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get("/api/v1/user/admin/me");
-        console.log("User authenticated:", response.data);
-        setIsAuthenticated(true);
-        setAdmin(response.data.user);
-      } catch (error) {
-        console.error("Authentication error:", error.response?.data || error.message);
-        setIsAuthenticated(false);
-        setAdmin({});
-      }
-    };
-    fetchUser();
+    // Only run in browser environment, not during build
+    if (typeof window !== 'undefined') {
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get("/api/v1/user/admin/me");
+          console.log("User authenticated:", response.data);
+          setIsAuthenticated(true);
+          setAdmin(response.data.user);
+        } catch (error) {
+          console.error("Authentication error:", error.response?.data || error.message);
+          setIsAuthenticated(false);
+          setAdmin({});
+        }
+      };
+      fetchUser();
+    }
   }, []);
 
   return (
